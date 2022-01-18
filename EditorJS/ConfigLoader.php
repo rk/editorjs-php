@@ -10,6 +10,7 @@ namespace EditorJS;
 class ConfigLoader
 {
     public $tools = [];
+    public $cachePath;
 
     /**
      * ConfigLoader constructor
@@ -26,6 +27,7 @@ class ConfigLoader
 
         $config = json_decode($configuration, true);
         $this->loadTools($config);
+        $this->loadOther($config);
     }
 
     /**
@@ -61,4 +63,22 @@ class ConfigLoader
     {
         return $data;
     }
+
+    /**
+     * Load other configuration settings such as the cache directory.
+     *
+     * @param array $config
+     * @return void
+     */
+    private function loadOther($config)
+    {
+        $this->cachePath = !empty($config['cache_path'])
+            ? $config['cache_path']
+            : sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'purifier';
+
+        if (!is_dir($this->cachePath)) {
+            mkdir($this->cachePath, 0777, true);
+        }
+    }
+
 }
